@@ -1,0 +1,21 @@
+type: plugin4
+name: TarkovKeybind
+displayName: Tarkov Keybinds
+description: Send complex keybind combinations to Escape from Tarkov
+version: 1.0.0
+author: ElSebski
+copyright: Copyright 2026
+icon256x256: Icon256x256.png
+
+pluginFileName: TarkovKeybindPlugin.dll
+pluginFolderWin: bin
+
+supportedDevices:
+    - LoupedeckCtFamily
+    - MXCreativeConsole
+
+license: MIT
+minimumLoupedeckVersion: 6.0
+
+homePageUrl: https://github.com
+supportPageUrl: https://github.com

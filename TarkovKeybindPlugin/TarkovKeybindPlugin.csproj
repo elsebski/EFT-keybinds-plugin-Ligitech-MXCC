@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Loupedeck.TarkovKeybindPlugin</RootNamespace>
+    <AssemblyName>TarkovKeybindPlugin</AssemblyName>
+
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+
+    <!-- Logi Plugin Service paths -->
+    <PluginApiDir Condition="$(OS) == 'Windows_NT'">C:\Program Files\Logi\LogiPluginService\</PluginApiDir>
+    <PluginDir Condition="$(OS) == 'Windows_NT'">$(LocalAppData)\Logi\LogiPluginService\Plugins\</PluginDir>
+
+    <BaseOutputPath>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\bin\'))</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)$(Configuration)\bin\</OutputPath>
+
+    <PluginShortName>TarkovKeybind</PluginShortName>
+  </PropertyGroup>
+
+  <!-- Reference the Logi Plugin API DLL -->
+  <ItemGroup>
+    <Reference Include="PluginApi">
+      <HintPath>$(PluginApiDir)PluginApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copy package metadata to output -->
+  <Target Name="CopyPackage" AfterTargets="Build">
+    <ItemGroup>
+      <PackageFiles Include="package\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BaseOutputPath)$(Configuration)\%(RecursiveDir)" />
+  </Target>
+
+  <!-- Create .link file and trigger plugin reload -->
+  <Target Name="PostBuild" AfterTargets="CopyPackage">
+    <Exec Condition="$(OS) == 'Windows_NT'" Command="echo $(BaseOutputPath)$(Configuration)\ &gt; &quot;$(PluginDir)$(ProjectName).link&quot;" />
+    <Message Text="Created plugin link at: $(PluginDir)$(ProjectName).link" Importance="High" />
+    <Exec Condition="$(OS) == 'Windows_NT'" Command="start loupedeck:plugin/$(PluginShortName)/reload" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="PluginClean" AfterTargets="CoreClean">
+    <Delete Condition="$(OS) == 'Windows_NT'" Files="$(PluginDir)$(ProjectName).link" />
+    <RemoveDir Directories="$(OutputPath)..\" />
+  </Target>
+
+</Project>
