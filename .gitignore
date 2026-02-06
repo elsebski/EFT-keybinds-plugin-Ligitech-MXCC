@@ -35,3 +35,7 @@ Desktop.ini
 
 # macOS
 .DS_Store
+
+# Companion display generated files
+**/companion/*.json
+**/companion/*.tmp

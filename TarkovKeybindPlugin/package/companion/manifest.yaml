@@ -1,0 +1,7 @@
+pluginId: tarkovkeybind
+displayName: Tarkov Keybinds
+version: 1.0.0
+description: Send complex keybind combinations to Escape from Tarkov
+author: ElSebski
+autoStart: false
+entryPoint: daemon.py
