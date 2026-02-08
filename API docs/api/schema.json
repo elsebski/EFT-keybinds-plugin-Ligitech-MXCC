@@ -1,0 +1,156 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mado MX Plugin State",
+  "description": "Schema for plugin state files that communicate with the Mado MX",
+  "type": "object",
+  "required": ["pluginId", "displayName", "widgets"],
+  "properties": {
+    "pluginId": {
+      "type": "string",
+      "description": "Unique identifier for the plugin (lowercase, no spaces)",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Human-readable name shown on the display",
+      "maxLength": 32
+    },
+    "updated": {
+      "type": "integer",
+      "description": "Unix timestamp of last update"
+    },
+    "priority": {
+      "type": "integer",
+      "description": "Display priority (higher = shown first)",
+      "default": 0
+    },
+    "widgets": {
+      "type": "array",
+      "description": "List of widgets to display",
+      "items": {
+        "$ref": "#/definitions/widget"
+      }
+    }
+  },
+  "definitions": {
+    "widget": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["text", "progress", "icon", "list", "grid"]
+        },
+        "zone": {
+          "type": "string",
+          "enum": ["header", "main", "footer", "bottom"],
+          "default": "main"
+        },
+        "label": {
+          "type": "string",
+          "description": "Label shown with the widget",
+          "maxLength": 24
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "text" } } },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Text value to display",
+                "maxLength": 64
+              },
+              "color": {
+                "type": "string",
+                "description": "Text color (hex or name)",
+                "default": "white"
+              }
+            },
+            "required": ["value"]
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "progress" } } },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "number",
+                "description": "Current value",
+                "minimum": 0
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum value",
+                "default": 100
+              },
+              "color": {
+                "type": "string",
+                "description": "Bar color",
+                "default": "cyan"
+              }
+            },
+            "required": ["value"]
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "list" } } },
+          "then": {
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "List items",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": { "type": "string" },
+                    "value": { "type": "string" },
+                    "selected": { "type": "boolean" }
+                  },
+                  "required": ["label"]
+                },
+                "maxItems": 8
+              }
+            },
+            "required": ["items"]
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "grid" } } },
+          "then": {
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Grid items (shown as buttons)",
+                "items": { "type": "string" },
+                "maxItems": 10
+              },
+              "selected": {
+                "type": "integer",
+                "description": "Index of selected item"
+              }
+            },
+            "required": ["items"]
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "icon" } } },
+          "then": {
+            "properties": {
+              "icon": {
+                "type": "string",
+                "description": "Icon name from built-in set"
+              },
+              "value": {
+                "type": "string",
+                "description": "Optional text next to icon"
+              }
+            },
+            "required": ["icon"]
+          }
+        }
+      ]
+    }
+  }
+}

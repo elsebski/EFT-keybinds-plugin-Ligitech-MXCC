@@ -1,0 +1,63 @@
+pluginId: tarkovkeybinds
+displayName: Tarkov Keybinds
+version: 1.0.0
+description: Displays keybinds from the Tarkov plugin
+author: ElSebski
+autoStart: false
+
+settingsSchema:
+  - key: color
+    type: select
+    label: Display Color
+    description: Color of the keybind text on the CYD screen
+    default: orange
+    options:
+      - { value: orange, label: Orange }
+      - { value: white, label: White }
+      - { value: cyan, label: Cyan }
+      - { value: green, label: Green }
+      - { value: yellow, label: Yellow }
+      - { value: red, label: Red }
+      - { value: magenta, label: Magenta }
+      - { value: blue, label: Blue }
+
+  - key: valueFontSize
+    type: select
+    label: Key Font Size
+    description: Font size for the key combination (e.g. LAlt+T)
+    default: xlarge
+    options:
+      - { value: xlarge, label: Extra Large }
+      - { value: large, label: Large }
+      - { value: medium, label: Medium }
+      - { value: small, label: Small }
+
+  - key: labelFontSize
+    type: select
+    label: Label Font Size
+    description: Font size for the action name (e.g. Check Ammo)
+    default: small
+    options:
+      - { value: tiny, label: Tiny }
+      - { value: small, label: Small }
+      - { value: medium, label: Medium }
+
+  - key: valueAlign
+    type: select
+    label: Key Alignment
+    description: Alignment of the key combination text
+    default: center
+    options:
+      - { value: center, label: Center }
+      - { value: left, label: Left }
+      - { value: right, label: Right }
+
+  - key: labelAlign
+    type: select
+    label: Label Alignment
+    description: Alignment of the action name text
+    default: center
+    options:
+      - { value: center, label: Center }
+      - { value: left, label: Left }
+      - { value: right, label: Right }

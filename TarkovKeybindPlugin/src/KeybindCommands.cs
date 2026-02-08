@@ -10,14 +10,31 @@ namespace Loupedeck.TarkovKeybindPlugin
         protected abstract String KeyName { get; }
         protected abstract void ExecuteKeybind();
 
+        private static readonly CompanionDisplayClient _displayClient = new CompanionDisplayClient("tarkovkeybinds", "Tarkov Keybinds");
+        private readonly String _keyCombination;
+
         protected KeybindCommandBase(String displayName, String description)
             : base(displayName, description, "Tarkov Keybinds")
         {
+            // Extract keys from description (usually in format "KEYS - Description")
+            var parts = description.Split(new[] { " - " }, StringSplitOptions.None);
+            this._keyCombination = parts.Length > 0 ? parts[0] : "";
         }
 
         protected override void RunCommand(String actionParameter)
         {
             PluginLog.Write($"Command executed: {this.DisplayName}");
+
+            // Update Mado MX companion display
+            try
+            {
+                _displayClient.UpdateDisplay(this.DisplayName, this._keyCombination);
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Write($"Error updating display: {ex.Message}");
+            }
+
             this.ExecuteKeybind();
         }
 

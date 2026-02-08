@@ -41,17 +41,34 @@
       <PackageFiles Include="package\**\*" />
     </ItemGroup>
     <Copy SourceFiles="@(PackageFiles)" DestinationFolder="$(BaseOutputPath)$(DistFolderName)\%(RecursiveDir)" />
+    
+    <!-- Copy companion folder -->
+    <ItemGroup>
+      <CompanionFiles Include="companion\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CompanionFiles)" DestinationFolder="$(BaseOutputPath)$(DistFolderName)\companion\%(RecursiveDir)" />
+
+    <!-- Copy pluginconfig.yaml -->
+    <Copy SourceFiles="pluginconfig.yaml" DestinationFolder="$(BaseOutputPath)$(DistFolderName)\" />
   </Target>
 
-  <!-- Create .link file and trigger plugin reload -->
+  <!-- Deploy to Logi Plugins folder -->
   <Target Name="PostBuild" AfterTargets="CopyPackage">
-    <Exec Condition="$(OS) == 'Windows_NT'" Command="echo $(BaseOutputPath)$(Configuration)\ &gt; &quot;$(PluginDir)$(ProjectName).link&quot;" />
-    <Message Text="Created plugin link at: $(PluginDir)$(ProjectName).link" Importance="High" />
+    <PropertyGroup>
+      <DeployDir>$(PluginDir)$(ProjectName)\</DeployDir>
+    </PropertyGroup>
+    
+    <Message Text="Deploying plugin to: $(DeployDir)" Importance="High" />
+    
+    <!-- Copy the entire distribution folder to the plugins directory -->
+    <Exec Condition="$(OS) == 'Windows_NT'" Command="xcopy /E /Y /I &quot;$(BaseOutputPath)$(DistFolderName)&quot; &quot;$(DeployDir)&quot;" />
+    
+    <!-- Trigger plugin reload -->
     <Exec Condition="$(OS) == 'Windows_NT'" Command="start loupedeck:plugin/$(PluginShortName)/reload" ContinueOnError="true" />
   </Target>
 
   <Target Name="PluginClean" AfterTargets="CoreClean">
-    <Delete Condition="$(OS) == 'Windows_NT'" Files="$(PluginDir)$(ProjectName).link" />
+    <RemoveDir Directories="$(PluginDir)$(ProjectName)" />
     <RemoveDir Directories="$(OutputPath)..\" />
   </Target>
 
